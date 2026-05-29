@@ -3,6 +3,13 @@ description: "Download AetherPak CLI binary and install dependencies on Linux."
 branding:
   icon: "terminal"
   color: "blue"
+outputs:
+  version:
+    description: "Resolved version tag of AetherPak CLI"
+    value: ${{ steps.download.outputs.version }}
+  path:
+    description: "Directory where the AetherPak CLI binary is installed"
+    value: ${{ steps.download.outputs.path }}
 inputs:
   version:
     description: "Version of AetherPak CLI to install (e.g., v0.2.0, latest)"
@@ -38,12 +45,17 @@ runs:
         command -v ostree  >/dev/null 2>&1 || MISSING="$MISSING ostree"
         command -v gpg     >/dev/null 2>&1 || MISSING="$MISSING gnupg"
         command -v flatpak-builder >/dev/null 2>&1 || MISSING="$MISSING flatpak-builder"
-        if [ -n "$MISSING" ] && command -v apt-get >/dev/null 2>&1; then
-          export DEBIAN_FRONTEND=noninteractive
-          sudo apt-get update && sudo apt-get install -y $MISSING
+        if [ -n "$MISSING" ]; then
+          if command -v apt-get >/dev/null 2>&1; then
+            export DEBIAN_FRONTEND=noninteractive
+            sudo apt-get update && sudo apt-get install -y $MISSING
+          else
+            echo "::warning::Missing dependencies ($MISSING) could not be installed because 'apt-get' is not available. Please install them manually."
+          fi
         fi
 
     - name: Download AetherPak CLI
+      id: download
       shell: bash
       env:
         GH_TOKEN: ${{ github.token }}
@@ -72,11 +84,11 @@ runs:
           fi
           # Fallback to public GitHub API
           if [ -z "$TAG" ]; then
-            AUTH_HEADER=""
+            AUTH=()
             if [ -n "${GH_TOKEN:-}" ]; then
-              AUTH_HEADER="-H \"Authorization: token $GH_TOKEN\""
+              AUTH=(-H "Authorization: token $GH_TOKEN")
             fi
-            TAG=$(eval "curl -sSL $AUTH_HEADER https://api.github.com/repos/${{ inputs.repo }}/releases/latest" | jq -r '.tag_name // empty')
+            TAG=$(curl -sSL "${AUTH[@]}" "https://api.github.com/repos/${{ inputs.repo }}/releases/latest" | jq -r '.tag_name // empty' || true)
           fi
           # Fail if we still couldn't resolve the latest tag
           if [ -z "$TAG" ] || [ "$TAG" = "null" ]; then
@@ -106,12 +118,12 @@ runs:
         fi
 
         if [ "$DOWNLOADED" = "false" ]; then
-          AUTH_HEADER=""
+          AUTH=()
           if [ -n "${GH_TOKEN:-}" ]; then
-            AUTH_HEADER="-H \"Authorization: token $GH_TOKEN\""
+            AUTH=(-H "Authorization: token $GH_TOKEN")
           fi
           URL="https://github.com/${{ inputs.repo }}/releases/download/${TAG}/${ARCHIVE_NAME}"
-          eval "curl -fL $AUTH_HEADER -o \"$DOWNLOAD_DIR/$ARCHIVE_NAME\" \"$URL\""
+          curl -fL "${AUTH[@]}" -o "$DOWNLOAD_DIR/$ARCHIVE_NAME" "$URL"
         fi
 
         # 4. Extract archive
@@ -124,3 +136,7 @@ runs:
         # 6. Add to PATH
         echo "$INSTALL_DIR" >> "$GITHUB_PATH"
         echo "Successfully installed aetherpak $TAG to $INSTALL_DIR and added to GITHUB_PATH"
+
+        # 7. Set outputs
+        echo "version=$TAG" >> "$GITHUB_OUTPUT"
+        echo "path=$INSTALL_DIR" >> "$GITHUB_OUTPUT"
