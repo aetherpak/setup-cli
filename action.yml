@@ -1,5 +1,8 @@
 name: "AetherPak Setup CLI"
 description: "Download AetherPak CLI binary and install dependencies on Linux."
+branding:
+  icon: "terminal"
+  color: "blue"
 inputs:
   version:
     description: "Version of AetherPak CLI to install (e.g., v0.2.0, latest)"
