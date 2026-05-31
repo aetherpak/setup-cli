@@ -22,4 +22,4 @@ Add the following step to your GitHub Actions workflow:
 | --- | --- | --- | --- |
 | `version` | Version of AetherPak CLI to install (e.g., `v0.2.0`, `latest`) | `latest` | No |
 | `repo` | GitHub repository containing the AetherPak CLI releases | `aetherpak/cli` | No |
-| `install-dependencies` | Whether to automatically install missing system dependencies (`flatpak`, `ostree`, `gpg`, `flatpak-builder`) via `apt-get` on Linux | `true` | No |
+| `install-dependencies` | Whether to automatically install missing system dependencies (`flatpak`, `ostree`, `flatpak-builder`) via `apt-get` on Linux | `true` | No |

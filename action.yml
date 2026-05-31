@@ -20,7 +20,7 @@ inputs:
     required: false
     default: "aetherpak/cli"
   install-dependencies:
-    description: "Trigger installation of missing host dependencies (flatpak, ostree, gpg, flatpak-builder)"
+    description: "Trigger installation of missing host dependencies (flatpak, ostree, flatpak-builder)"
     required: false
     default: "true"
 
@@ -43,7 +43,6 @@ runs:
         MISSING=""
         command -v flatpak >/dev/null 2>&1 || MISSING="$MISSING flatpak"
         command -v ostree  >/dev/null 2>&1 || MISSING="$MISSING ostree"
-        command -v gpg     >/dev/null 2>&1 || MISSING="$MISSING gnupg"
         command -v flatpak-builder >/dev/null 2>&1 || MISSING="$MISSING flatpak-builder"
         if [ -n "$MISSING" ]; then
           if command -v apt-get >/dev/null 2>&1; then
