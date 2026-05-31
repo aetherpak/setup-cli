@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/aetherpak/setup-cli/compare/v1.0.0...v1.1.0) (2026-05-31)
+
+
+### Features
+
+* drop gpg from installed dependencies ([1cfc7b3](https://github.com/aetherpak/setup-cli/commit/1cfc7b317b34a7429e2744773c3ab69407e10314))
+
 ## [1.0.0](https://github.com/aetherpak/setup-cli/compare/v0.2.0...v1.0.0) (2026-05-29)
 
 
