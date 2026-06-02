@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/aetherpak/setup-cli/compare/v1.1.1...v1.1.2) (2026-06-02)
+
+
+### Bug Fixes
+
+* add microdnf/dnf support and skip downloading if on PATH ([36c2714](https://github.com/aetherpak/setup-cli/commit/36c2714ef22139c7c6fb6e141e90ebe9f84de98d))
+
 ## [1.1.1](https://github.com/aetherpak/setup-cli/compare/v1.1.0...v1.1.1) (2026-06-02)
 
 
