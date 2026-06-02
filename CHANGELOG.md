@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/aetherpak/setup-cli/compare/v1.1.0...v1.1.1) (2026-06-02)
+
+
+### Bug Fixes
+
+* install patch, unzip, bzip2, and zstd host dependencies ([c4c4d64](https://github.com/aetherpak/setup-cli/commit/c4c4d64455bf2fdfbe570f850972ab1d1e1d0757))
+
 ## [1.1.0](https://github.com/aetherpak/setup-cli/compare/v1.0.0...v1.1.0) (2026-05-31)
 
 
