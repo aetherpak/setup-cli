@@ -49,11 +49,17 @@ runs:
         command -v bzip2 >/dev/null 2>&1 || MISSING="$MISSING bzip2"
         command -v zstd  >/dev/null 2>&1 || MISSING="$MISSING zstd"
         if [ -n "$MISSING" ]; then
+          SUDO=""
+          command -v sudo >/dev/null 2>&1 && SUDO="sudo"
           if command -v apt-get >/dev/null 2>&1; then
             export DEBIAN_FRONTEND=noninteractive
-            sudo apt-get update && sudo apt-get install -y $MISSING
+            $SUDO apt-get update && $SUDO apt-get install -y $MISSING
+          elif command -v microdnf >/dev/null 2>&1; then
+            $SUDO microdnf install -y --setopt=install_weak_deps=0 --nodocs $MISSING
+          elif command -v dnf >/dev/null 2>&1; then
+            $SUDO dnf install -y --setopt=install_weak_deps=0 --nodocs $MISSING
           else
-            echo "::warning::Missing dependencies ($MISSING) could not be installed because 'apt-get' is not available. Please install them manually."
+            echo "::warning::Missing dependencies ($MISSING) could not be installed because a supported package manager (apt-get, microdnf, dnf) is not available. Please install them manually."
           fi
         fi
 
@@ -64,6 +70,14 @@ runs:
         GH_TOKEN: ${{ github.token }}
       run: |
         set -euo pipefail
+
+        # Skip downloading if aetherpak is already available on PATH
+        if command -v aetherpak >/dev/null 2>&1; then
+          echo "aetherpak is already installed on PATH. Skipping download."
+          echo "version=existing" >> "$GITHUB_OUTPUT"
+          echo "path=$(dirname "$(command -v aetherpak)")" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
 
         # 1. Map Arch
         case "$(echo "$RUNNER_ARCH" | tr '[:upper:]' '[:lower:]')" in
