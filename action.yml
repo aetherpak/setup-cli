@@ -44,6 +44,10 @@ runs:
         command -v flatpak >/dev/null 2>&1 || MISSING="$MISSING flatpak"
         command -v ostree  >/dev/null 2>&1 || MISSING="$MISSING ostree"
         command -v flatpak-builder >/dev/null 2>&1 || MISSING="$MISSING flatpak-builder"
+        command -v patch >/dev/null 2>&1 || MISSING="$MISSING patch"
+        command -v unzip >/dev/null 2>&1 || MISSING="$MISSING unzip"
+        command -v bzip2 >/dev/null 2>&1 || MISSING="$MISSING bzip2"
+        command -v zstd  >/dev/null 2>&1 || MISSING="$MISSING zstd"
         if [ -n "$MISSING" ]; then
           if command -v apt-get >/dev/null 2>&1; then
             export DEBIAN_FRONTEND=noninteractive
