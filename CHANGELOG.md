@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/aetherpak/setup-cli/compare/v1.1.2...v1.2.0) (2026-06-03)
+
+
+### Features
+
+* validate version and replace existing aetherpak cli binary on mismatch ([d5c57c7](https://github.com/aetherpak/setup-cli/commit/d5c57c767f05eb00b73259d214e8d9c3fb675868))
+
 ## [1.1.2](https://github.com/aetherpak/setup-cli/compare/v1.1.1...v1.1.2) (2026-06-02)
 
 
