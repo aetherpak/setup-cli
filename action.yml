@@ -101,7 +101,7 @@ runs:
             TAG=$(gh release view --repo "${{ inputs.repo }}" --json tagName -q .tagName || true)
           fi
           # Fallback to public GitHub API
-          if [ -z "$TAG" ]; then
+          if [ -z "$TAG" ] || [ "$TAG" = "latest" ]; then
             AUTH=()
             if [ -n "${GH_TOKEN:-}" ]; then
               AUTH=(-H "Authorization: token $GH_TOKEN")
@@ -109,7 +109,7 @@ runs:
             TAG=$(curl -sSL "${AUTH[@]}" "https://api.github.com/repos/${{ inputs.repo }}/releases/latest" | jq -r '.tag_name // empty' || true)
           fi
           # Fail if we still couldn't resolve the latest tag
-          if [ -z "$TAG" ] || [ "$TAG" = "null" ]; then
+          if [ -z "$TAG" ] || [ "$TAG" = "latest" ] || [ "$TAG" = "null" ]; then
             echo "::error::Could not resolve latest release tag for ${{ inputs.repo }}"
             exit 1
           fi
