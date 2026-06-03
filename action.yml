@@ -71,14 +71,6 @@ runs:
       run: |
         set -euo pipefail
 
-        # Skip downloading if aetherpak is already available on PATH
-        if command -v aetherpak >/dev/null 2>&1; then
-          echo "aetherpak is already installed on PATH. Skipping download."
-          echo "version=existing" >> "$GITHUB_OUTPUT"
-          echo "path=$(dirname "$(command -v aetherpak)")" >> "$GITHUB_OUTPUT"
-          exit 0
-        fi
-
         # 1. Map Arch
         case "$(echo "$RUNNER_ARCH" | tr '[:upper:]' '[:lower:]')" in
           x64|amd64) ARCH="amd64" ;;
@@ -94,6 +86,15 @@ runs:
 
         # 2. Resolve version tag
         TAG="${{ inputs.version }}"
+        if [ -z "$TAG" ] || [ "$TAG" = "latest" ]; then
+          if [ -n "${AETHERPAK_CLI_VERSION:-}" ]; then
+            TAG="$AETHERPAK_CLI_VERSION"
+          fi
+        fi
+        if [ -z "$TAG" ]; then
+          TAG="latest"
+        fi
+
         if [ "$TAG" = "latest" ]; then
           # First try gh release view
           if command -v gh >/dev/null 2>&1; then
@@ -115,6 +116,22 @@ runs:
         fi
 
         echo "Resolved version tag: $TAG"
+
+        # Check if existing aetherpak matches the target TAG
+        MATCH="false"
+        if command -v aetherpak >/dev/null 2>&1; then
+          CURRENT_VER=$(aetherpak --version 2>/dev/null | awk '{print $NF}' || true)
+          if [ "$CURRENT_VER" = "$TAG" ]; then
+            MATCH="true"
+          fi
+        fi
+
+        if [ "$MATCH" = "true" ]; then
+          echo "aetherpak version $TAG is already installed on PATH. Skipping download."
+          echo "version=$TAG" >> "$GITHUB_OUTPUT"
+          echo "path=$(dirname "$(command -v aetherpak)")" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
 
         # 3. Download release asset
         ARCHIVE_NAME="aetherpak-${OS}-${ARCH}.${EXT}"
