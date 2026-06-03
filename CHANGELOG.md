@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/aetherpak/setup-cli/compare/v1.2.0...v1.2.1) (2026-06-03)
+
+
+### Bug Fixes
+
+* handle the use of latest tag alias correctly ([ac23052](https://github.com/aetherpak/setup-cli/commit/ac2305258e5cea590cc89d9cf429324115c7459d))
+
 ## [1.2.0](https://github.com/aetherpak/setup-cli/compare/v1.1.2...v1.2.0) (2026-06-03)
 
 
