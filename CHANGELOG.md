@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/aetherpak/setup-cli/compare/v1.2.1...v1.3.0) (2026-06-09)
+
+
+### Features
+
+* install dbus/dbus-daemon dependency if dbus-run-session is missing ([ff80e36](https://github.com/aetherpak/setup-cli/commit/ff80e368c97a7f20bd86d86c3b9fb0350cd4d69c))
+
 ## [1.2.1](https://github.com/aetherpak/setup-cli/compare/v1.2.0...v1.2.1) (2026-06-03)
 
 
