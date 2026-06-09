@@ -48,18 +48,38 @@ runs:
         command -v unzip >/dev/null 2>&1 || MISSING="$MISSING unzip"
         command -v bzip2 >/dev/null 2>&1 || MISSING="$MISSING bzip2"
         command -v zstd  >/dev/null 2>&1 || MISSING="$MISSING zstd"
-        if [ -n "$MISSING" ]; then
+
+        NEED_DBUS="false"
+        command -v dbus-run-session >/dev/null 2>&1 || NEED_DBUS="true"
+
+        if [ -n "$MISSING" ] || [ "$NEED_DBUS" = "true" ]; then
           SUDO=""
           command -v sudo >/dev/null 2>&1 && SUDO="sudo"
           if command -v apt-get >/dev/null 2>&1; then
             export DEBIAN_FRONTEND=noninteractive
-            $SUDO apt-get update && $SUDO apt-get install -y $MISSING
+            PKGS="$MISSING"
+            if [ "$NEED_DBUS" = "true" ]; then
+              PKGS="$PKGS dbus"
+            fi
+            $SUDO apt-get update && $SUDO apt-get install -y $PKGS
           elif command -v microdnf >/dev/null 2>&1; then
-            $SUDO microdnf install -y --setopt=install_weak_deps=0 --nodocs $MISSING
+            PKGS="$MISSING"
+            if [ "$NEED_DBUS" = "true" ]; then
+              PKGS="$PKGS dbus-daemon"
+            fi
+            $SUDO microdnf install -y --setopt=install_weak_deps=0 --nodocs $PKGS
           elif command -v dnf >/dev/null 2>&1; then
-            $SUDO dnf install -y --setopt=install_weak_deps=0 --nodocs $MISSING
+            PKGS="$MISSING"
+            if [ "$NEED_DBUS" = "true" ]; then
+              PKGS="$PKGS dbus-daemon"
+            fi
+            $SUDO dnf install -y --setopt=install_weak_deps=0 --nodocs $PKGS
           else
-            echo "::warning::Missing dependencies ($MISSING) could not be installed because a supported package manager (apt-get, microdnf, dnf) is not available. Please install them manually."
+            PKGS="$MISSING"
+            if [ "$NEED_DBUS" = "true" ]; then
+              PKGS="$PKGS dbus-run-session (dbus/dbus-daemon)"
+            fi
+            echo "::warning::Missing dependencies ($PKGS) could not be installed because a supported package manager (apt-get, microdnf, dnf) is not available. Please install them manually."
           fi
         fi
 
